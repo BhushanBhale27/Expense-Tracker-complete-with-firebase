@@ -1,19 +1,21 @@
 import React from "react";
-import AuthContext from '../store/AuthContext'
-import { useState , useContext , useRef } from "react";
+import AuthContext from "../store/AuthContext";
+import { useState, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const authCtx = useContext(AuthContext)
-  const emailInputRef = useRef()
-  const passwordInputRef = useRef()
+  const authCtx = useContext(AuthContext);
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
 
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isLogin, setIsLogin] = useState(true);
+
+
+  
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -21,68 +23,67 @@ const Login = () => {
 
   const submitHandler = async (event) => {
     event.preventDefault();
-  
+
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
-  
+
     setIsLoading(true);
-  
+
     try {
       if (isLogin) {
         const response = await fetch(
-          'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCKWoR7yhvw1UDVPb3Y6Sd7U08cGcIvdXQ',
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCKWoR7yhvw1UDVPb3Y6Sd7U08cGcIvdXQ",
           {
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify({
               email: enteredEmail,
               password: enteredPassword,
               returnSecureToken: true,
             }),
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
         );
-  
+
         setIsLoading(false);
-  
+
         if (response.ok) {
           const data = await response.json();
           authCtx.login(data.idToken, enteredEmail);
-          alert('Login successfully');
-  
+          alert("Login successfully");
+
           setTimeout(() => {
-            navigate('/expenses');
+            navigate("/expenses");
           }, 1200);
-          
         } else {
           // const errorData = await response.json();
-          let errorMessage = 'Authentication failed';
+          let errorMessage = "Authentication failed";
           throw new Error(errorMessage);
         }
       } else {
         const response = await fetch(
-          'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCKWoR7yhvw1UDVPb3Y6Sd7U08cGcIvdXQ',
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCKWoR7yhvw1UDVPb3Y6Sd7U08cGcIvdXQ",
           {
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify({
               email: enteredEmail,
               password: enteredPassword,
               returnSecureToken: true,
             }),
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
         );
-  
+
         setIsLoading(false);
-  
+
         if (response.ok) {
-          alert('Account created successfully');
+          alert("Account created successfully");
         } else {
           // const errorData = await response.json();
-          let errorMessage = 'Authentication failed';
+          let errorMessage = "Authentication failed";
           throw new Error(errorMessage);
         }
       }
@@ -90,9 +91,44 @@ const Login = () => {
       alert(error.message);
     }
   };
-  
 
+  const forgetPasswordHandler = async (event) => {
+    event.preventDefault();
 
+    const enteredEmail = emailInputRef.current.value;
+    setIsLoading(true);
+
+    try{
+    const response = await fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCKWoR7yhvw1UDVPb3Y6Sd7U08cGcIvdXQ",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          requestType: "PASSWORD_RESET",
+          email: enteredEmail,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    setIsLoading(false);
+    if(response.ok){
+      alert("Check your mail for password reset link")
+    }
+    else{
+      let errorMessage = "Please enter registered mailId"
+      throw new Error(errorMessage);
+
+    }
+
+  } 
+  catch(error){
+    alert(error.message)
+
+  }
+
+}
 
 
   return (
@@ -143,6 +179,14 @@ const Login = () => {
             onClick={switchAuthModeHandler}
           >
             {isLogin ? "Create new account" : "Login with existing account"}
+          </button>
+        </div>
+        <div>
+          <button
+            className="text-small text-red-500"
+            onClick={forgetPasswordHandler}
+          >
+            Forget Password
           </button>
         </div>
       </form>
