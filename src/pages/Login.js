@@ -1,0 +1,153 @@
+import React from "react";
+import AuthContext from '../store/AuthContext'
+import { useState , useContext , useRef } from "react";
+import { useNavigate } from "react-router-dom";
+
+
+const Login = () => {
+  const navigate = useNavigate();
+
+  const authCtx = useContext(AuthContext)
+  const emailInputRef = useRef()
+  const passwordInputRef = useRef()
+
+  const [isLoading,setIsLoading] = useState(false)
+
+  const [isLogin, setIsLogin] = useState(true);
+
+  const switchAuthModeHandler = () => {
+    setIsLogin((prevState) => !prevState);
+  };
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+  
+    const enteredEmail = emailInputRef.current.value;
+    const enteredPassword = passwordInputRef.current.value;
+  
+    setIsLoading(true);
+  
+    try {
+      if (isLogin) {
+        const response = await fetch(
+          'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCKWoR7yhvw1UDVPb3Y6Sd7U08cGcIvdXQ',
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              email: enteredEmail,
+              password: enteredPassword,
+              returnSecureToken: true,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+  
+        setIsLoading(false);
+  
+        if (response.ok) {
+          const data = await response.json();
+          authCtx.login(data.idToken, enteredEmail);
+          alert('Login successfully');
+  
+          setTimeout(() => {
+            navigate('/expenses');
+          }, 1200);
+          
+        } else {
+          // const errorData = await response.json();
+          let errorMessage = 'Authentication failed';
+          throw new Error(errorMessage);
+        }
+      } else {
+        const response = await fetch(
+          'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCKWoR7yhvw1UDVPb3Y6Sd7U08cGcIvdXQ',
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              email: enteredEmail,
+              password: enteredPassword,
+              returnSecureToken: true,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+  
+        setIsLoading(false);
+  
+        if (response.ok) {
+          alert('Account created successfully');
+        } else {
+          // const errorData = await response.json();
+          let errorMessage = 'Authentication failed';
+          throw new Error(errorMessage);
+        }
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+  
+
+
+
+
+  return (
+    <section className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-4xl font-bold mb-4">
+        {isLogin ? "Login" : "Sign Up"}
+      </h1>
+      <form
+        className="bg-white shadow-md rounded-lg px-8 py-6"
+        onSubmit={submitHandler}
+      >
+        <div className="mb-4">
+          <label htmlFor="email" className="block font-semibold mb-2">
+            Your Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            required
+            className="border border-gray-300 rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ref={emailInputRef}
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="password" className="block font-semibold mb-2">
+            Your Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            required
+            className="border border-gray-300 rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ref={passwordInputRef}
+          />
+        </div>
+        <div className="mb-4">
+          {!isLoading && (
+            <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-300">
+              {isLogin ? "Login" : "Create Account"}
+            </button>
+          )}
+          {isLoading && <p>Sending request...</p>}
+        </div>
+        <div className="text-sm text-gray-600">
+          <button
+            type="button"
+            className="underline"
+            onClick={switchAuthModeHandler}
+          >
+            {isLogin ? "Create new account" : "Login with existing account"}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+};
+
+export default Login;
