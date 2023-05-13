@@ -6,15 +6,12 @@ const Expenses = () => {
   const [enteredAmount, setEnteredAmount] = useState("");
   const [enteredDescription, setEnteredDescription] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Category");
-
-  // ...
+  const [darkMode, setDarkMode] = useState(false);
 
   const Useremail = localStorage.getItem("mail");
   const ChangesEMail = Useremail
     ? Useremail.replace("@", "").replace(".", "")
     : "";
-
-  // ...
 
   const email = useRef();
   const des = useRef();
@@ -82,7 +79,6 @@ const Expenses = () => {
     setEnteredDescription(expenseToUpdate.description);
     setSelectedCategory(expenseToUpdate.category);
 
-    // remove the expense that is being edited from the list
     const updatedExpenses = expenses.filter((expense) => expense.id !== id);
     setExpenses(updatedExpenses);
   };
@@ -107,9 +103,18 @@ const Expenses = () => {
     0
   );
 
+  const handleDarkModeToggle = () => {
+    setDarkMode((prevMode) => !prevMode);
+  };
+
   return (
-    <div className="text-center bg-gray-200 p-8">
-      <h1 className="text-4xl font-bold text-gray-800 mb-6">Expense Tracker</h1>
+    <div
+      className={`text-center p-8 ${
+        darkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+      }`}
+    >
+      <h1 className="text-4xl font-bold mb-6">Expense Tracker</h1>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           ref={email}
@@ -151,9 +156,7 @@ const Expenses = () => {
       </form>
 
       <div className="mt-8">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Total Expenses: {totalExpenses}
-        </h2>
+        <h2 className="text-2xl font-bold">Total Expenses: {totalExpenses}</h2>
         {totalExpenses > 10000 && (
           <button
             className="p-2 rounded bg-green-500 text-white font-bold mt-4"
@@ -164,14 +167,27 @@ const Expenses = () => {
         )}
       </div>
 
+      <div className="mt-8">
+        {totalExpenses > 10000 && ( <button
+          className={`p-2 rounded ${
+            darkMode ? "bg-gray-400 text-black" : "bg-gray-600 text-white"
+          }`}
+          onClick={handleDarkModeToggle}
+        >
+           Dark Mode
+        </button>)}
+      </div>
+
       {expenses.length > 0 && (
         <div className="mt-8">
           {expenses.map((expense, index) => (
             <div
               key={index}
-              className="flex items-center justify-between bg-white rounded p-4 mb-4"
+              className={`flex items-center justify-between bg-white rounded p-4 mb-4 ${
+                darkMode ? "text-white" : "text-black"
+              }`}
             >
-              <p className="text-gray-800">
+              <p>
                 Amount: {expense.amount} | Description: {expense.description} |
                 Category: {expense.category}
               </p>
@@ -196,4 +212,5 @@ const Expenses = () => {
     </div>
   );
 };
+
 export default Expenses;
