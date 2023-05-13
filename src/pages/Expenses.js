@@ -123,7 +123,7 @@ const Expenses = () => {
           value={enteredAmount}
           onChange={(event) => setEnteredAmount(event.target.value)}
           placeholder="Enter Amount"
-          className="p-2 rounded border border-gray-400"
+          className={`p-2 rounded border border-gray-400 ${darkMode ? "text-black" : "text-black"}`}
         />
         <input
           ref={des}
@@ -132,14 +132,14 @@ const Expenses = () => {
           value={enteredDescription}
           onChange={(event) => setEnteredDescription(event.target.value)}
           placeholder="Enter Description"
-          className="p-2 rounded border border-gray-400"
+          className={`p-2 rounded border border-gray-400 ${darkMode ? "text-black" : "text-black"}`}
         />
         <select
           ref={categories}
           name="categories"
           value={selectedCategory}
           onChange={(event) => setSelectedCategory(event.target.value)}
-          className="p-2 rounded border border-gray-400"
+          className={`p-2 rounded border border-gray-400 ${darkMode ? "text-black" : "text-black"}`}
         >
           <option value="Category">Category</option>
           <option value="Food">Food</option>
@@ -168,23 +168,25 @@ const Expenses = () => {
       </div>
 
       <div className="mt-8">
-        {totalExpenses > 10000 && ( <button
-          className={`p-2 rounded ${
-            darkMode ? "bg-gray-400 text-black" : "bg-gray-600 text-white"
-          }`}
-          onClick={handleDarkModeToggle}
-        >
-           Dark Mode
-        </button>)}
+        {totalExpenses > 10000 && (
+          <button
+            className={`p-2 rounded ${
+              darkMode ? "bg-gray-400 text-black " : "bg-gray-600 text-white"
+            }`}
+            onClick={handleDarkModeToggle}
+          >
+            Dark Mode
+          </button>
+        )}
       </div>
 
       {expenses.length > 0 && (
-        <div className="mt-8">
+        <div className={`mt-8 ${darkMode ? "text-white" : "text-black"}`}>
           {expenses.map((expense, index) => (
             <div
               key={index}
               className={`flex items-center justify-between bg-white rounded p-4 mb-4 ${
-                darkMode ? "text-white" : "text-black"
+                darkMode ? "text-black" : ""
               }`}
             >
               <p>
