@@ -101,6 +101,9 @@ const Login = () => {
     try{
     const response = await fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCKWoR7yhvw1UDVPb3Y6Sd7U08cGcIvdXQ",
+
+      
+
       {
         method: "POST",
         body: JSON.stringify({
