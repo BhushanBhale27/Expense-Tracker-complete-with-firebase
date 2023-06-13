@@ -20,7 +20,7 @@ const Expenses = () => {
   useEffect(() => {
     axios
       .get(
-        `https://sabkastore-88e1e-default-rtdb.firebaseio.com/expenses/${ChangesEMail}.json`
+        `https://expense-tracker-214d7-default-rtdb.firebaseio.com/expenses/${ChangesEMail}.json`
       )
       .then((response) => {
         const fetchedExpenses = [];
@@ -50,7 +50,7 @@ const Expenses = () => {
 
     axios
       .post(
-        `https://sabkastore-88e1e-default-rtdb.firebaseio.com/expenses/${ChangesEMail}.json`,
+        `https://expense-tracker-214d7-default-rtdb.firebaseio.com/expenses/${ChangesEMail}.json`,
         {
           amount: enteredEmail,
           description: enteredDes,
@@ -86,7 +86,7 @@ const Expenses = () => {
   const handleDelete = (id) => {
     axios
       .delete(
-        `https://sabkastore-88e1e-default-rtdb.firebaseio.com/expenses/${ChangesEMail}/${id}.json`
+        `https://expense-tracker-214d7-default-rtdb.firebaseio.com/expenses/${ChangesEMail}/${id}.json`
       )
       .then(() => {
         setExpenses((prevExpenses) =>
